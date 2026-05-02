@@ -5,6 +5,8 @@
 
 Code repository for the paper submitted to **Environmental Modelling & Software**.
 
+**Data DOI**: [10.17632/wfgsnpdpm3.3](https://doi.org/10.17632/wfgsnpdpm3.3) (Mendeley Data)
+
 ## Overview
 
 This repository provides a hybrid hydrological modeling framework that couples the **Distributed Time-Variant Gain Model (DTVGM)** with deep learning residual correction. The framework simulates daily runoff in semi-arid watersheds by combining:
@@ -139,6 +141,14 @@ The model requires the following input data (see `data/README.md` for detailed f
 | Snow Cover | GeoTIFF | 0.01° daily | MODIS MOD10A1 |
 | Observed Runoff | Excel (.xlsx) | Daily | Gauging station |
 
+## Data Availability
+
+The raw meteorological, NDVI, snow cover, and observed runoff datasets are archived at Mendeley Data:
+
+[![DOI](https://img.shields.io/badge/DOI-10.17632%2Fwfgsnpdpm3.3-blue)](https://doi.org/10.17632/wfgsnpdpm3.3)
+
+See [data/README.md](data/README.md) for detailed data format and source descriptions.
+
 ## Model Architecture
 
 ### DTVGM Physical Module
@@ -174,9 +184,11 @@ Performance metrics on the test set (2014-2022):
 If you use this code in your research, please cite:
 
 ```bibtex
-@article{your2025paper,
-  title={Your Paper Title},
-  author={Your Name et al.},
+@article{zhao2025hybrid,
+  title={Hybrid Streamflow Simulation in a Semi-Arid Basin Using an Enhanced
+         Distributed Time-Variant Gain Model and Deep Learning Residual Correction},
+  author={Zhao, Shuang and Duan, Limin and Wang, Yixuan and Luo, Yanyun
+          and Wang, Xixi and Singh, V. P. and Liu, Tingxi},
   journal={Environmental Modelling & Software},
   year={2025},
   publisher={Elsevier}
@@ -189,4 +201,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For questions or collaboration, please contact: [your-email]
+For questions or collaboration, please contact: 18018351069@qq.com
