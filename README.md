@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
-Code repository for the paper submitted to **Environmental Modelling & Software**.
+Code repository for the paper.
 
 **Data DOI**: [10.17632/wfgsnpdpm3.3](https://doi.org/10.17632/wfgsnpdpm3.3) (Mendeley Data)
 
@@ -13,7 +13,7 @@ This repository provides a hybrid hydrological modeling framework that couples t
 
 - **Physical base model**: DTVGM with antecedent precipitation index (API) and snowmelt modules
 - **ML booster**: Histogram-based Gradient Boosting for learning complex physical residuals
-- **Deep learning correctors**: LSTM, TCN, and Transformer models for temporal residual correction
+- **Deep learning correctors**: BiLSTM-Attention, TCN, and Transformer models for temporal residual correction
 
 The framework was developed and tested on the **Xilin River Basin** in Inner Mongolia, China, using daily meteorological forcing data and MODIS NDVI from 1984-2022.
 
@@ -21,7 +21,7 @@ The framework was developed and tested on the **Xilin River Basin** in Inner Mon
 
 - Multi-source data fusion (meteorology, NDVI, snow cover, runoff)
 - Physics-guided feature engineering (lag effects, seasonal encoding, rolling statistics)
-- Three deep learning architectures for residual correction: LSTM, TCN, Transformer
+- Three deep learning architectures for residual correction: BiLSTM-Attention, TCN, Transformer
 - Transfer learning across gauging stations
 - SHAP-based driver importance analysis
 - Publication-quality visualization suite
@@ -35,9 +35,9 @@ The framework was developed and tested on the **Xilin River Basin** in Inner Mon
 ├── README.md                          # This file
 ├── src/
 │   ├── main_train_evaluate.py         # Main pipeline: train DTVGM+DL, evaluate, output results
-│   ├── model_comparison.py            # Fair comparison of LSTM vs TCN vs Transformer
-│   ├── transfer_learning_3station.py  # Transfer learning across 3 stations (Transformer)
-│   ├── finetune_3station.py           # Fine-tuning experiments (LSTM-based)
+│   ├── model_comparison.py            # Fair comparison of BiLSTM-Attention vs TCN vs Transformer
+│   ├── transfer_learning_3station.py  # Transfer learning across 3 stations (exploratory)
+│   ├── finetune_3station.py           # Fine-tuning experiments (BiLSTM-based)
 │   ├── shap_driver_analysis.py        # SHAP-based scientific driver analysis
 │   ├── driving_factor_analysis.py     # Permutation importance analysis
 │   ├── feature_importance_analysis.py # Feature importance with XGBoost
@@ -61,7 +61,7 @@ The framework was developed and tested on the **Xilin River Basin** in Inner Mon
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/dtvgm-hydro-dl.git
+git clone https://github.com/lotto1069/dtvgm-hydro-dl.git
 cd dtvgm-hydro-dl
 
 # Create and activate conda environment (recommended)
@@ -89,7 +89,7 @@ python src/main_train_evaluate.py
 This script:
 1. Loads and engineers features from TIF raster files and Excel runoff data
 2. Trains the DTVGM physical + ML booster model
-3. Trains LSTM, TCN, and Transformer residual correctors
+3. Trains BiLSTM-Attention, TCN, and Transformer residual correctors
 4. Evaluates all models (NSE, R², RMSE)
 5. Saves results to `outputs/`
 
@@ -99,7 +99,7 @@ This script:
 python src/model_comparison.py
 ```
 
-Fairly compares LSTM, TCN, and Transformer at the Langrengu station with correct R²/NSE metrics.
+Fairly compares BiLSTM-Attention, TCN, and Transformer at the Langrengu station with correct R²/NSE metrics.
 
 ### 4. Transfer Learning Across Stations
 
@@ -107,7 +107,7 @@ Fairly compares LSTM, TCN, and Transformer at the Langrengu station with correct
 python src/transfer_learning_3station.py
 ```
 
-Pre-trains a master Transformer model and applies/fine-tunes it across three stations.
+Exploratory transfer learning experiments across three stations.
 
 ### 5. Driver Analysis
 
@@ -164,36 +164,28 @@ The Distributed Time-Variant Gain Model provides the physical backbone:
 
 ### Deep Learning Correctors
 Three architectures correct the remaining temporal residuals:
-- **ResidualLSTM**: 2-layer LSTM with residual connection
-- **ResidualTCN**: Temporal Convolutional Network with dilation
+- **ResidualBiLSTM**: 2-layer BiLSTM with attention mechanism and residual connection
+- **ResidualTCN**: Temporal Convolutional Network with dilated convolutions
 - **ResidualTransformer**: Transformer Encoder with positional encoding
 
 ## Results
 
 Performance metrics on the test set (2014-2022):
 
-| Model | NSE | R² | RMSE (m³/s) |
-|-------|-----|-----|-------------|
-| DTVGM | 0.855 | 0.856 | 0.236 |
-| DTVGM+LSTM | 0.886 | 0.887 | 0.212 |
-| DTVGM+TCN | 0.871 | 0.877 | 0.225 |
-| DTVGM+Transformer | 0.860 | 0.865 | 0.219 |
+| Model | NSE |
+|-------|-----|
+| DTVGM | 0.855 |
+| DTVGM+BiLSTM-Attention | 0.940 |
+| DTVGM+TCN | 0.947 |
+| DTVGM+Transformer | 0.760 |
+
+DTVGM+TCN achieves the best performance, reducing high-flow RMSE by 25.4% relative to the physical baseline. DTVGM+BiLSTM-Attention follows closely (NSE = 0.940). The Transformer architecture underperforms, failing to improve upon the DTVGM baseline in this residual-correction context.
 
 ## Citation
 
 If you use this code in your research, please cite:
 
-```bibtex
-@article{zhao2025hybrid,
-  title={Hybrid Streamflow Simulation in a Semi-Arid Basin Using an Enhanced
-         Distributed Time-Variant Gain Model and Deep Learning Residual Correction},
-  author={Zhao, Shuang and Duan, Limin and Wang, Yixuan and Luo, Yanyun
-          and Wang, Xixi and Singh, V. P. and Liu, Tingxi},
-  journal={Environmental Modelling & Software},
-  year={2025},
-  publisher={Elsevier}
-}
-```
+Zhao, S., Duan, L., Wang, Y., Luo, Y., Wang, X., Singh, V. P., & Liu, T. (2026). Hybrid Streamflow Simulation in a Semi-Arid Basin Using an Enhanced Distributed Time-Variant Gain Model and Deep Learning Residual Correction. *Submitted*.
 
 ## License
 
